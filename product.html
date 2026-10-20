@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>상품 상세 | NINE STORE</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header id="header"></header>
+
+  <main class="inner">
+    <div class="detail" id="detail">
+      <div class="detail__thumb" id="thumb"></div>
+
+      <div class="detail__info">
+        <p class="breadcrumb" id="breadcrumb"></p>
+        <p class="detail__brand" id="brand"></p>
+        <h1 class="detail__name" id="name"></h1>
+
+        <div class="detail__price" id="price"></div>
+
+        <dl>
+          <div class="info-row"><dt>배송</dt><dd id="ship"></dd></div>
+          <div class="info-row"><dt>후기</dt><dd id="review"></dd></div>
+          <div class="info-row"><dt>적립</dt><dd id="point"></dd></div>
+        </dl>
+
+        <p class="opt-label">사이즈</p>
+        <div class="sizes" id="sizes"></div>
+
+        <p class="opt-label">수량</p>
+        <div class="qty">
+          <button type="button" id="minus" aria-label="수량 감소">−</button>
+          <span id="qty">1</span>
+          <button type="button" id="plus" aria-label="수량 증가">+</button>
+        </div>
+
+        <div class="total-row">
+          <span>총 상품 금액</span>
+          <strong id="total"></strong>
+        </div>
+        <p class="hint" id="hint"></p>
+
+        <div class="btns">
+          <button type="button" class="btn btn--line" id="addCart">장바구니</button>
+          <button type="button" class="btn btn--primary" id="buyNow">바로 구매</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer id="footer"></footer>
+
+  <script src="js/products.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/product.js"></script>
+</body>
+</html>

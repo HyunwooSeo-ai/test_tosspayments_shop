@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>결제 실패 | NINE STORE</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header id="header"></header>
+
+  <main class="result">
+    <div class="result__icon result__icon--fail">!</div>
+    <h1>결제에 실패했습니다</h1>
+    <p id="desc">다시 시도해 주세요.</p>
+
+    <dl class="result__table" id="table"></dl>
+
+    <div class="result__btns">
+      <a href="cart.html" class="btn btn--line">장바구니</a>
+      <a href="checkout.html" class="btn btn--primary">다시 결제하기</a>
+    </div>
+  </main>
+
+  <footer id="footer"></footer>
+
+  <script src="js/products.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const q = new URLSearchParams(location.search);
+      const esc = (s) => String(s).replace(/</g, "&lt;");
+      if (q.get("message")) document.getElementById("desc").textContent = q.get("message");
+      const rows = [
+        ["에러 코드", q.get("code") || "-"],
+        ["주문번호", q.get("orderId") || "-"],
+      ];
+      document.getElementById("table").innerHTML = rows
+        .map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`)
+        .join("");
+    });
+  </script>
+</body>
+</html>

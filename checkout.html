@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>주문서 | NINE STORE</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- 토스페이먼츠 결제위젯 SDK v2 -->
+  <script src="https://js.tosspayments.com/v2/standard"></script>
+</head>
+<body>
+  <header id="header"></header>
+
+  <main class="inner">
+    <h1 class="page-title">주문서</h1>
+    <div class="order">
+      <section>
+        <h2 class="section-title">주문자 정보</h2>
+        <div class="form-grid">
+          <div class="field"><label for="buyerName">이름</label><input id="buyerName" autocomplete="name" placeholder="이름을 입력해 주세요" value="김토스"></div>
+          <div class="field"><label for="buyerPhone">휴대폰</label><input id="buyerPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="숫자만 입력 (01012345678)" value="01012341234"></div>
+          <div class="field"><label for="buyerEmail">이메일</label><input id="buyerEmail" type="email" autocomplete="email" placeholder="example@email.com" value="customer@example.com"></div>
+          <div class="field"><label for="buyerAddr">배송지</label><input id="buyerAddr" autocomplete="street-address" placeholder="주소를 입력해 주세요" value="서울특별시 강남구 테헤란로 1"></div>
+        </div>
+
+        <h2 class="section-title">주문 상품 <span id="itemCount" style="color:#7a7a7a;font-weight:600"></span></h2>
+        <div id="orderItems"></div>
+
+        <h2 class="section-title">결제 수단</h2>
+        <div class="pay-box">
+          <!-- 결제 UI -->
+          <div id="payment-method"></div>
+          <!-- 이용약관 UI -->
+          <div id="agreement"></div>
+          <p class="pay-box__empty" id="payLoading">결제 수단을 불러오는 중입니다…</p>
+        </div>
+      </section>
+
+      <aside class="summary">
+        <div class="summary__row"><span>상품 금액</span><span id="sumOrigin">0원</span></div>
+        <div class="summary__row summary__row--discount"><span>할인 금액</span><span id="sumDiscount">0원</span></div>
+        <div class="summary__row"><span>배송비</span><span id="sumShip">0원</span></div>
+        <div class="summary__total"><span>최종 결제 금액</span><strong id="sumTotal">0원</strong></div>
+        <button type="button" class="btn btn--primary btn--block" id="payBtn" disabled>결제하기</button>
+        <p class="hint" id="payHint"></p>
+        <p class="summary__note">테스트 결제 환경입니다. 실제 금액이 청구되지 않습니다.</p>
+      </aside>
+    </div>
+  </main>
+
+  <footer id="footer"></footer>
+
+  <script src="js/products.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/checkout.js"></script>
+</body>
+</html>

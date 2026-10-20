@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>장바구니 | NINE STORE</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header id="header"></header>
+
+  <main class="inner">
+    <h1 class="page-title">장바구니</h1>
+    <div class="order">
+      <section>
+        <div class="cart-head">
+          <label><input type="checkbox" id="checkAll" checked> 전체 선택</label>
+          <button type="button" class="link-btn" id="removeChecked">선택 삭제</button>
+        </div>
+        <div id="cartList"></div>
+      </section>
+
+      <aside class="summary">
+        <div class="summary__row"><span>상품 금액</span><span id="sumOrigin">0원</span></div>
+        <div class="summary__row summary__row--discount"><span>할인 금액</span><span id="sumDiscount">0원</span></div>
+        <div class="summary__row"><span>배송비</span><span id="sumShip">0원</span></div>
+        <div class="summary__total"><span>결제 예정 금액</span><strong id="sumTotal">0원</strong></div>
+        <button type="button" class="btn btn--primary btn--block" id="orderBtn">주문하기</button>
+        <p class="summary__note">5만원 이상 구매 또는 무료배송 상품 포함 시 배송비 무료</p>
+      </aside>
+    </div>
+  </main>
+
+  <footer id="footer"></footer>
+
+  <script src="js/products.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/cart.js"></script>
+</body>
+</html>
