@@ -48,10 +48,24 @@
         </div>
       </div>
     </div>
+
+    <section class="reviews" id="reviews">
+      <h2 class="section-title">후기 <span id="reviewCount" class="reviews__count"></span></h2>
+      <form class="review-form" id="reviewForm" hidden>
+        <p class="opt-label" style="margin-top:0">구매하신 상품은 어떠셨나요?</p>
+        <div class="stars" id="stars"></div>
+        <textarea id="reviewContent" maxlength="1000" placeholder="후기를 5자 이상 남겨 주세요"></textarea>
+        <p class="hint" id="reviewHint"></p>
+        <button type="submit" class="btn btn--primary">후기 등록</button>
+      </form>
+      <div id="reviewList"></div>
+    </section>
   </main>
 
   <footer id="footer"></footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase.js"></script>
   <script src="js/products.js"></script>
   <script src="js/common.js"></script>
   <script src="js/product.js"></script>

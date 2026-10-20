@@ -1,91 +1,58 @@
 /* 상품 데이터 + 상품 이미지
- * 사진은 PHOTOS(Unsplash)에서 가져오고, 사진이 없거나 로드에 실패하면 SVG 일러스트로 대체합니다.
+ * 카테고리·상품·재고는 Supabase DB에서 불러옵니다(loadCatalog). 페이지는 App.ready 이후에 PRODUCTS를 씁니다.
+ * 사진은 image_url을 쓰고, 사진이 없거나 로드에 실패하면 SVG 일러스트로 대체합니다.
  */
-const CATEGORIES = {
-  clothes: { name: "상의", title: "상의", desc: "티셔츠 · 후드 · 맨투맨 · 셔츠", page: "clothes.html" },
-  shoes: { name: "신발", title: "신발", desc: "스니커즈 · 러닝화 · 하이탑", page: "shoes.html" },
-  pants: { name: "바지", title: "바지", desc: "데님 · 슬랙스 · 카고 · 숏팬츠", page: "pants.html" },
-};
+let CATEGORIES = {}; // key → { name, title, desc, page, isSale }
+let PRODUCTS = [];   // 노출 중인 상품만
 
-const PRODUCTS = [
-  // ---------- 상의 ----------
-  { id: "c01", category: "clothes", sub: "티셔츠", shape: "tee", color: "#f4f4f2", brand: "STANDARD LAB", name: "에센셜 오버핏 반팔 티셔츠 화이트", price: 39000, discount: 30, rating: 4.9, reviews: 12840, sizes: ["S", "M", "L", "XL"], tags: ["무료배송", "단독"] },
-  { id: "c02", category: "clothes", sub: "후드", shape: "hoodie", color: "#2b2b2b", brand: "LOW TIDE", name: "헤비웨이트 스웻 후드 집업 블랙", price: 89000, discount: 25, rating: 4.8, reviews: 6421, sizes: ["M", "L", "XL"], tags: ["무료배송"] },
-  { id: "c03", category: "clothes", sub: "티셔츠", shape: "tee", color: "#1f2a44", brand: "NORTHBOUND", name: "코튼 로고 그래픽 반팔 티셔츠 네이비", price: 35000, discount: 20, rating: 4.7, reviews: 3290, sizes: ["S", "M", "L", "XL"], tags: [] },
-  { id: "c04", category: "clothes", sub: "맨투맨", shape: "hoodie", color: "#9aa58c", brand: "OAKSHED", name: "피그먼트 다잉 후디 세이지", price: 72000, discount: 35, rating: 4.8, reviews: 2104, sizes: ["S", "M", "L"], tags: ["무료배송", "한정"] },
-  { id: "c05", category: "clothes", sub: "티셔츠", shape: "tee", color: "#c9b79c", brand: "GRAYMOOD", name: "워셔블 린넨 블렌드 티셔츠 베이지", price: 42000, discount: 10, rating: 4.6, reviews: 980, sizes: ["M", "L", "XL"], tags: [] },
-  { id: "c06", category: "clothes", sub: "후드", shape: "hoodie", color: "#8e8e8e", brand: "UNIFORM.", name: "베이직 기모 후드 티셔츠 멜란지 그레이", price: 59000, discount: 40, rating: 4.9, reviews: 15302, sizes: ["S", "M", "L", "XL", "XXL"], tags: ["무료배송", "단독"] },
-  { id: "c07", category: "clothes", sub: "티셔츠", shape: "tee", color: "#7a1f2b", brand: "HALFTONE", name: "빈티지 워싱 레터링 티셔츠 버건디", price: 38000, discount: 15, rating: 4.5, reviews: 712, sizes: ["S", "M", "L"], tags: [] },
-  { id: "c08", category: "clothes", sub: "후드", shape: "hoodie", color: "#3d4a3a", brand: "STILL LIFE", name: "오버사이즈 아치 로고 후드 다크 올리브", price: 79000, discount: 20, rating: 4.7, reviews: 1843, sizes: ["M", "L", "XL"], tags: ["무료배송"] },
-  { id: "c09", category: "clothes", sub: "티셔츠", shape: "tee", color: "#9cc0e0", brand: "PALE BLUE", name: "썸머 쿨링 반팔 티셔츠 스카이 블루", price: 29000, discount: 0, rating: 4.4, reviews: 431, sizes: ["S", "M", "L", "XL"], tags: [] },
-  { id: "c10", category: "clothes", sub: "후드", shape: "hoodie", color: "#e9e2d0", brand: "RUNWAY 9", name: "투웨이 크롭 후드 집업 아이보리", price: 69000, discount: 30, rating: 4.6, reviews: 1022, sizes: ["S", "M"], tags: ["한정"] },
+/* HTML에 넣을 문자열 이스케이프 (DB 값은 관리자·회원이 바꿀 수 있으므로 항상 거친다) */
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+}
 
-  // ---------- 신발 ----------
-  { id: "s01", category: "shoes", sub: "스니커즈", shape: "sneaker", color: "#f6f6f6", brand: "RUNWAY 9", name: "클래식 레더 로우 스니커즈 화이트", price: 99000, discount: 20, rating: 4.9, reviews: 22310, sizes: ["230", "240", "250", "260", "270", "280"], tags: ["무료배송", "단독"] },
-  { id: "s02", category: "shoes", sub: "러닝화", shape: "runner", color: "#2d2d2d", brand: "NORTHBOUND", name: "에어 쿠션 데일리 러닝화 블랙", price: 129000, discount: 15, rating: 4.8, reviews: 8705, sizes: ["240", "250", "260", "270", "280"], tags: ["무료배송"] },
-  { id: "s03", category: "shoes", sub: "하이탑", shape: "hightop", color: "#b23a2e", brand: "HALFTONE", name: "캔버스 하이탑 스니커즈 레드", price: 69000, discount: 30, rating: 4.7, reviews: 3412, sizes: ["230", "240", "250", "260", "270"], tags: [] },
-  { id: "s04", category: "shoes", sub: "스니커즈", shape: "sneaker", color: "#a89a84", brand: "OAKSHED", name: "스웨이드 테니스 스니커즈 토프", price: 119000, discount: 25, rating: 4.8, reviews: 1976, sizes: ["250", "260", "270", "280"], tags: ["무료배송", "한정"] },
-  { id: "s05", category: "shoes", sub: "러닝화", shape: "runner", color: "#5c7fb8", brand: "PALE BLUE", name: "라이트 메쉬 러닝화 블루", price: 89000, discount: 10, rating: 4.5, reviews: 860, sizes: ["240", "250", "260", "270"], tags: [] },
-  { id: "s06", category: "shoes", sub: "하이탑", shape: "hightop", color: "#1d1d1d", brand: "LOW TIDE", name: "레더 하이탑 워커 블랙", price: 159000, discount: 35, rating: 4.9, reviews: 4103, sizes: ["250", "260", "270", "280", "290"], tags: ["무료배송", "단독"] },
-  { id: "s07", category: "shoes", sub: "스니커즈", shape: "sneaker", color: "#d8d2c4", brand: "GRAYMOOD", name: "빈티지 코트 스니커즈 크림", price: 79000, discount: 20, rating: 4.6, reviews: 1290, sizes: ["230", "240", "250", "260"], tags: [] },
-  { id: "s08", category: "shoes", sub: "러닝화", shape: "runner", color: "#8d8d8d", brand: "UNIFORM.", name: "트레일 아웃도어 러너 그레이", price: 139000, discount: 0, rating: 4.7, reviews: 655, sizes: ["250", "260", "270", "280"], tags: ["무료배송"] },
-  { id: "s09", category: "shoes", sub: "스니커즈", shape: "sneaker", color: "#3e5c45", brand: "STILL LIFE", name: "레트로 트레이너 포레스트 그린", price: 109000, discount: 30, rating: 4.8, reviews: 2380, sizes: ["240", "250", "260", "270", "280"], tags: ["한정"] },
-  { id: "s10", category: "shoes", sub: "하이탑", shape: "hightop", color: "#efe8dc", brand: "STANDARD LAB", name: "캔버스 하이탑 오프화이트", price: 59000, discount: 15, rating: 4.6, reviews: 3011, sizes: ["230", "240", "250", "260", "270", "280"], tags: [] },
+/* 상의·신발·바지는 전용 페이지, 그 밖의 카테고리는 list.html?cat= 으로 엽니다. */
+function categoryPage(key) {
+  return ["clothes", "shoes", "pants"].includes(key) ? `${key}.html` : `list.html?cat=${encodeURIComponent(key)}`;
+}
 
-  // ---------- 바지 ----------
-  { id: "p01", category: "pants", sub: "데님", shape: "pants", color: "#3c5a82", brand: "STANDARD LAB", name: "와이드 스트레이트 데님 팬츠 미드 블루", price: 59000, discount: 30, rating: 4.9, reviews: 18904, sizes: ["28", "30", "32", "34"], tags: ["무료배송", "단독"] },
-  { id: "p02", category: "pants", sub: "슬랙스", shape: "pants", color: "#2a2a2a", brand: "UNIFORM.", name: "세미 와이드 히든 밴딩 슬랙스 블랙", price: 49000, discount: 25, rating: 4.8, reviews: 25611, sizes: ["S", "M", "L", "XL"], tags: ["무료배송"] },
-  { id: "p03", category: "pants", sub: "카고", shape: "cargo", color: "#6b6a4a", brand: "NORTHBOUND", name: "나일론 파라슈트 카고 팬츠 올리브", price: 79000, discount: 20, rating: 4.7, reviews: 4208, sizes: ["S", "M", "L"], tags: [] },
-  { id: "p04", category: "pants", sub: "숏팬츠", shape: "shorts", color: "#c7b495", brand: "GRAYMOOD", name: "코튼 치노 버뮤다 숏팬츠 베이지", price: 39000, discount: 15, rating: 4.6, reviews: 1730, sizes: ["S", "M", "L", "XL"], tags: [] },
-  { id: "p05", category: "pants", sub: "슬랙스", shape: "pants", color: "#8a8a8a", brand: "OAKSHED", name: "울 블렌드 투턱 슬랙스 그레이", price: 89000, discount: 35, rating: 4.8, reviews: 2950, sizes: ["28", "30", "32", "34", "36"], tags: ["무료배송", "한정"] },
-  { id: "p06", category: "pants", sub: "데님", shape: "pants", color: "#1c2433", brand: "LOW TIDE", name: "생지 셀비지 데님 팬츠 인디고", price: 129000, discount: 10, rating: 4.9, reviews: 1104, sizes: ["29", "30", "31", "32", "33"], tags: ["무료배송"] },
-  { id: "p07", category: "pants", sub: "카고", shape: "cargo", color: "#d9d4c7", brand: "STILL LIFE", name: "와이드 카펜터 카고 팬츠 아이보리", price: 69000, discount: 30, rating: 4.7, reviews: 2287, sizes: ["S", "M", "L", "XL"], tags: [] },
-  { id: "p08", category: "pants", sub: "숏팬츠", shape: "shorts", color: "#2f3a52", brand: "PALE BLUE", name: "스윔 겸용 나일론 숏팬츠 네이비", price: 35000, discount: 0, rating: 4.5, reviews: 388, sizes: ["M", "L", "XL"], tags: [] },
-  { id: "p09", category: "pants", sub: "데님", shape: "pants", color: "#9ab3cf", brand: "HALFTONE", name: "라이트 워싱 루즈핏 데님 스카이", price: 65000, discount: 20, rating: 4.6, reviews: 1543, sizes: ["28", "30", "32", "34"], tags: ["단독"] },
-  { id: "p10", category: "pants", sub: "슬랙스", shape: "pants", color: "#5b4636", brand: "RUNWAY 9", name: "코듀로이 와이드 팬츠 브라운", price: 55000, discount: 25, rating: 4.7, reviews: 977, sizes: ["S", "M", "L"], tags: ["무료배송"] },
-];
+/* DB 행 → 화면에서 쓰는 상품 객체 */
+function toProduct(r) {
+  const stock = [...(r.product_stock || [])].sort((a, b) => a.sort - b.sort);
+  return {
+    id: r.id, category: r.category, sub: r.sub, shape: r.shape, color: r.color,
+    brand: r.brand, name: r.name, price: r.price, discount: r.discount, tags: r.tags || [],
+    image: r.image_url, rating: Number(r.rating_avg), reviews: r.review_count, popularity: r.popularity,
+    visible: r.is_visible, sort: r.sort,
+    sizes: stock.map((s) => s.size),
+    stock: Object.fromEntries(stock.map((s) => [s.size, s.qty])),
+  };
+}
 
-/* 상품 사진 (Unsplash, Unsplash License — 무료 상업적 사용 가능) */
-const PHOTOS = {
-  c01: "photo-1581655353564-df123a1eb820",
-  c02: "photo-1579572331145-5e53b299c64e",
-  c03: "photo-1621951753163-ee63e7fc147e",
-  c04: "photo-1565978771542-0db9ab9ad3de",
-  c05: "photo-1562157873-818bc0726f68",
-  c06: "photo-1556821840-3a63f95609a7",
-  c07: "photo-1575737132307-1fad104f1f67",
-  c08: "photo-1454793781512-0fafb38dce83",
-  c09: "photo-1625728273603-0404614abb7e",
-  c10: "photo-1620799140188-3b2a02fd9a77",
-  s01: "photo-1544441892-794166f1e3be",
-  s02: "photo-1606107557195-0e29a4b5b4aa",
-  s03: "photo-1561909848-977d0617f275",
-  s04: "photo-1591370409347-2fd43b7842de",
-  s05: "photo-1571008887538-b36bb32f4571",
-  s06: "photo-1605732440685-d0654d81aa30",
-  s07: "photo-1608229751021-ed4bd8677753",
-  s08: "photo-1600185365926-3a2ce3cdb9eb",
-  s09: "photo-1564518042543-a208a659329d",
-  s10: "photo-1512374382149-233c42b6a83b",
-  p01: "photo-1602293589930-45aad59ba3ab",
-  p02: "photo-1718252540617-6ecda2b56b57",
-  p03: "photo-1511794322962-129ddbd0af38",
-  p04: "photo-1621496503717-095a410e1566",
-  p05: "photo-1473966968600-fa801b869a1a",
-  p06: "photo-1624378439575-d8705ad7ae80",
-  p07: "photo-1548883354-7622d03aca27",
-  p08: "photo-1589431665783-99ede05457c6",
-  p09: "photo-1542272604-787c3835535d",
-  p10: "photo-1788885939600-dc9d21535986",
-};
+const PRODUCT_SELECT = "*, product_stock(size, qty, sort)";
+
+async function loadCatalog() {
+  const [cats, prods] = await Promise.all([
+    sb.from("categories").select("*").eq("is_visible", true).order("sort"),
+    sb.from("products").select(PRODUCT_SELECT).eq("is_visible", true).order("sort"),
+  ]);
+  if (cats.error || prods.error) throw cats.error || prods.error;
+  CATEGORIES = Object.fromEntries(cats.data.map((c) => [c.key, {
+    name: c.name, title: c.name, desc: c.description, page: categoryPage(c.key), isSale: c.is_sale,
+  }]));
+  PRODUCTS = prods.data.map(toProduct);
+}
 
 function getProduct(id) {
   return PRODUCTS.find((p) => p.id === id);
 }
 
+/* 할인가: 100원 단위 반올림. 서버(sale_price 함수)와 같은 규칙입니다. */
 function salePrice(p) {
   return Math.round((p.price * (100 - p.discount)) / 100 / 100) * 100;
 }
+
+const totalStock = (p) => Object.values(p.stock || {}).reduce((s, n) => s + n, 0);
+const isSoldOut = (p) => p.sizes.length > 0 && totalStock(p) === 0;
 
 /* ---------- SVG 상품 이미지 ---------- */
 function isLight(hex) {
@@ -142,17 +109,19 @@ const SHAPES = {
 
 /* 상품 이미지: 실제 사진 우선, 로드 실패 시 SVG 일러스트로 대체 */
 function productImage(p, width = 600) {
-  const photo = PHOTOS[p.id];
-  if (!photo) return productSVG(p);
-  const src = `https://images.unsplash.com/${photo}?auto=format&fit=crop&w=${width}&h=${Math.round(width * 1.2)}&q=80`;
-  const alt = p.name.replace(/"/g, "&quot;");
-  return `<img src="${src}" alt="${alt}" loading="lazy" onerror="this.outerHTML=productSVG(getProduct('${p.id}'))">`;
+  if (!p.image) return productSVG(p);
+  const src = p.image.startsWith("https://images.unsplash.com/")
+    ? `${p.image}?auto=format&fit=crop&w=${width}&h=${Math.round(width * 1.2)}&q=80`
+    : p.image;
+  return `<img src="${esc(src)}" alt="${esc(p.name)}" loading="lazy" onerror="this.outerHTML=productSVG(getProduct('${esc(p.id)}')||{})">`;
 }
 
 function productSVG(p) {
-  const stroke = isLight(p.color) ? "#9a9a9a" : "rgba(0,0,0,.45)";
-  return `<svg viewBox="0 0 500 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${p.name}">
+  const color = /^#[0-9a-f]{6}$/i.test(p.color || "") ? p.color : "#dddddd";
+  const stroke = isLight(color) ? "#9a9a9a" : "rgba(0,0,0,.45)";
+  const shape = SHAPES[p.shape] || SHAPES.tee;
+  return `<svg viewBox="0 0 500 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(p.name)}">
     <rect width="500" height="600" fill="#f1f1f1"/>
-    ${SHAPES[p.shape](p.color, stroke)}
+    ${shape(color, stroke)}
   </svg>`;
 }

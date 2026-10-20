@@ -6,83 +6,29 @@
   <title>결제 완료 | NINE STORE</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body data-page="success">
   <header id="header"></header>
 
   <main class="result" id="result">
-    <div class="result__icon">✓</div>
-    <h1 id="title">결제 요청이 완료되었습니다</h1>
-    <p id="desc">주문해 주셔서 감사합니다.</p>
+    <div class="result__icon result__icon--wait" id="icon">…</div>
+    <h1 id="title">결제를 확인하고 있습니다</h1>
+    <p id="desc">잠시만 기다려 주세요. 창을 닫지 마세요.</p>
 
     <dl class="result__table" id="table"></dl>
 
-    <p class="result__notice">
-      ※ 퍼블리싱 데모 단계입니다. 실제 결제를 확정하려면 서버에서
-      <b>결제 승인 API(POST https://api.tosspayments.com/v1/payments/confirm)</b>를
-      paymentKey · orderId · amount와 시크릿 키로 호출해야 합니다. 승인 API를 호출하지 않으면 10분 후 결제가 만료됩니다.
-    </p>
-
     <div class="result__btns">
       <a href="clothes.html" class="btn btn--line">쇼핑 계속하기</a>
-      <a href="cart.html" class="btn btn--primary">장바구니</a>
+      <a href="mypage.html" class="btn btn--primary" id="orderLink" hidden>주문 상세 보기</a>
+      <button type="button" class="btn btn--primary" id="retry" hidden>다시 확인하기</button>
     </div>
   </main>
 
   <footer id="footer"></footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase.js"></script>
   <script src="js/products.js"></script>
   <script src="js/common.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const q = new URLSearchParams(location.search);
-      const paymentKey = q.get("paymentKey");
-      const orderId = q.get("orderId");
-      const amount = Number(q.get("amount"));
-      const pending = readJSON(ORDER_KEY, null, "sessionStorage");
-
-      const fail = (msg) => {
-        document.querySelector(".result__icon").className = "result__icon result__icon--fail";
-        document.querySelector(".result__icon").textContent = "!";
-        document.getElementById("title").textContent = "결제 확인에 실패했습니다";
-        document.getElementById("desc").textContent = msg;
-      };
-
-      if (!paymentKey || !orderId) return fail("결제 정보가 없습니다.");
-
-      // 결제 요청 시 금액과 리다이렉트된 금액이 같은지 확인 (위변조 방지)
-      if (pending && pending.orderId === orderId && pending.amount !== amount) {
-        return fail("결제 금액이 주문 금액과 일치하지 않습니다.");
-      }
-
-      const rows = [
-        ["주문번호", orderId],
-        ["주문명", pending?.orderName || "-"],
-        ["결제 금액", won(amount)],
-        ["결제 유형", q.get("paymentType") || "-"],
-        ["paymentKey", paymentKey],
-      ];
-      document.getElementById("table").innerHTML = rows
-        .map(([k, v]) => `<div><dt>${k}</dt><dd>${String(v).replace(/</g, "&lt;")}</dd></div>`)
-        .join("");
-
-      // 장바구니에서 결제한 상품 제거
-      if (pending && pending.orderId === orderId) {
-        if (pending.source === "cart") {
-          const paid = pending.items.map((i) => i.id + "|" + i.size);
-          Cart.save(Cart.get().filter((i) => !paid.includes(i.id + "|" + i.size)));
-        }
-        sessionStorage.removeItem(ORDER_KEY);
-        sessionStorage.removeItem(CHECKOUT_KEY);
-      }
-
-      /* 서버 연동 시 예시
-      fetch("/api/payments/confirm", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentKey, orderId, amount }),
-      });
-      */
-    });
-  </script>
+  <script src="js/result.js"></script>
 </body>
 </html>

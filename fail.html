@@ -6,7 +6,7 @@
   <title>결제 실패 | NINE STORE</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body data-page="fail">
   <header id="header"></header>
 
   <main class="result">
@@ -24,21 +24,10 @@
 
   <footer id="footer"></footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase.js"></script>
   <script src="js/products.js"></script>
   <script src="js/common.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const q = new URLSearchParams(location.search);
-      const esc = (s) => String(s).replace(/</g, "&lt;");
-      if (q.get("message")) document.getElementById("desc").textContent = q.get("message");
-      const rows = [
-        ["에러 코드", q.get("code") || "-"],
-        ["주문번호", q.get("orderId") || "-"],
-      ];
-      document.getElementById("table").innerHTML = rows
-        .map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`)
-        .join("");
-    });
-  </script>
+  <script src="js/result.js"></script>
 </body>
 </html>

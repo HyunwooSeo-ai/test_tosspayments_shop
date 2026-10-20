@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>마이페이지 | NINE STORE</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="mypage">
+  <header id="header"></header>
+
+  <main class="inner">
+    <h1 class="page-title">마이페이지</h1>
+    <div class="tabs" id="tabs">
+      <a href="?tab=orders" data-tab="orders">주문 내역</a>
+      <a href="?tab=likes" data-tab="likes">좋아요</a>
+      <a href="?tab=profile" data-tab="profile">내 정보</a>
+    </div>
+
+    <section id="tab-orders" class="tab-panel" hidden>
+      <div id="orderList"></div>
+    </section>
+
+    <section id="tab-likes" class="tab-panel" hidden>
+      <div class="grid" id="likeGrid" style="padding-top:20px"></div>
+    </section>
+
+    <section id="tab-profile" class="tab-panel" hidden>
+      <form id="profileForm" class="panel" novalidate>
+        <h2 class="section-title">기본 정보</h2>
+        <div class="form-grid">
+          <div class="field"><label for="pEmail">이메일</label><input id="pEmail" disabled></div>
+          <div class="field"><label for="pName">이름</label><input id="pName" maxlength="30" autocomplete="name"></div>
+          <div class="field"><label for="pPhone">휴대폰</label><input id="pPhone" type="tel" inputmode="numeric" placeholder="숫자만 입력 (01012345678)" autocomplete="tel"></div>
+          <div class="field"><label for="pAddr">기본 배송지</label><input id="pAddr" maxlength="200" autocomplete="street-address"></div>
+        </div>
+        <p class="hint" id="profileHint"></p>
+        <button type="submit" class="btn btn--primary">정보 저장</button>
+      </form>
+      <form id="passwordForm" class="panel" novalidate>
+        <h2 class="section-title">비밀번호 변경</h2>
+        <div class="form-grid">
+          <div class="field"><label for="newPw">새 비밀번호</label><input id="newPw" type="password" autocomplete="new-password" placeholder="8자 이상"></div>
+          <div class="field"><label for="newPw2">새 비밀번호 확인</label><input id="newPw2" type="password" autocomplete="new-password"></div>
+        </div>
+        <p class="hint" id="pwHint"></p>
+        <button type="submit" class="btn btn--line">비밀번호 변경</button>
+      </form>
+    </section>
+  </main>
+
+  <footer id="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/mypage.js"></script>
+</body>
+</html>

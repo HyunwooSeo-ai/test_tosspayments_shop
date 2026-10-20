@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>회원가입 | NINE STORE</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="signup">
+  <header id="header"></header>
+
+  <main class="auth">
+    <h1 class="auth__title">회원가입</h1>
+    <form id="authForm" novalidate>
+      <div class="auth__field"><label for="name">이름</label><input id="name" autocomplete="name" maxlength="30" required></div>
+      <div class="auth__field"><label for="email">이메일</label><input id="email" type="email" autocomplete="email" required></div>
+      <div class="auth__field"><label for="password">비밀번호</label><input id="password" type="password" autocomplete="new-password" placeholder="8자 이상" required></div>
+      <div class="auth__field"><label for="password2">비밀번호 확인</label><input id="password2" type="password" autocomplete="new-password" required></div>
+      <p class="hint" id="hint"></p>
+      <button type="submit" class="btn btn--primary btn--block">가입하기</button>
+    </form>
+    <div class="auth__links">
+      <span>이미 회원이신가요?</span>
+      <a href="login.html" id="altLink">로그인</a>
+    </div>
+  </main>
+
+  <footer id="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

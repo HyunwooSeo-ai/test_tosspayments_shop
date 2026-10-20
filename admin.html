@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>관리자 | NINE STORE</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="admin">
+  <header id="header"></header>
+
+  <main class="inner admin" id="adminMain">
+    <h1 class="page-title">관리자</h1>
+    <div class="tabs" id="tabs">
+      <a href="?tab=products" data-tab="products">상품·재고</a>
+      <a href="?tab=orders" data-tab="orders">주문</a>
+      <a href="?tab=categories" data-tab="categories">카테고리</a>
+    </div>
+    <section id="tab-products" class="tab-panel" hidden></section>
+    <section id="tab-orders" class="tab-panel" hidden></section>
+    <section id="tab-categories" class="tab-panel" hidden></section>
+  </main>
+
+  <dialog class="modal" id="productModal">
+    <form id="productForm" novalidate>
+      <h2 class="section-title" id="productModalTitle">상품</h2>
+      <div class="form-grid">
+        <div class="field"><label for="fCategory">카테고리</label><select id="fCategory"></select></div>
+        <div class="field"><label for="fSub">세부 분류</label><input id="fSub" maxlength="30" placeholder="예: 티셔츠"></div>
+        <div class="field"><label for="fBrand">브랜드</label><input id="fBrand" maxlength="40"></div>
+        <div class="field"><label for="fName">상품명</label><input id="fName" maxlength="100"></div>
+        <div class="field"><label for="fPrice">정가(원)</label><input id="fPrice" type="number" min="100" step="100"></div>
+        <div class="field"><label for="fDiscount">할인율(%)</label><input id="fDiscount" type="number" min="0" max="90"></div>
+        <div class="field"><span class="field__label">태그</span>
+          <div class="checks">
+            <label><input type="checkbox" name="tag" value="무료배송"> 무료배송</label>
+            <label><input type="checkbox" name="tag" value="단독"> 단독</label>
+            <label><input type="checkbox" name="tag" value="한정"> 한정</label>
+          </div>
+        </div>
+        <div class="field"><span class="field__label">사진</span>
+          <div class="photo-field">
+            <div class="photo-field__preview" id="fPreview"></div>
+            <div class="photo-field__inputs">
+              <input type="file" id="fFile" accept="image/png,image/jpeg,image/webp" aria-label="사진 파일">
+              <input id="fImage" placeholder="또는 이미지 주소(https://...)" aria-label="이미지 주소">
+            </div>
+          </div>
+        </div>
+        <div class="field"><span class="field__label">노출</span><label class="checks"><input type="checkbox" id="fVisible"> 쇼핑몰에 노출</label></div>
+      </div>
+      <h3 class="opt-label">사이즈별 재고</h3>
+      <div id="stockRows" class="stock-rows"></div>
+      <button type="button" class="link-btn" id="addStockRow">+ 사이즈 추가</button>
+      <p class="hint" id="productHint"></p>
+      <div class="btns">
+        <button type="button" class="btn btn--line" id="productCancel">닫기</button>
+        <button type="submit" class="btn btn--primary">저장</button>
+      </div>
+    </form>
+  </dialog>
+
+  <footer id="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

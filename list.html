@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NINE STORE</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header id="header"></header>
+
+  <main>
+    <section class="banner">
+      <div class="inner">
+        <div>
+          <h1 id="bannerTitle"></h1>
+          <p id="bannerDesc"></p>
+        </div>
+        <span class="banner__tag">WEEKLY BEST</span>
+      </div>
+    </section>
+
+    <div class="inner">
+      <div class="toolbar">
+        <div id="chips" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+        <div class="toolbar__right">
+          <span id="count"></span>
+          <select id="sort" aria-label="정렬">
+            <option value="rank">랭킹순</option>
+            <option value="low">낮은 가격순</option>
+            <option value="high">높은 가격순</option>
+            <option value="discount">할인율순</option>
+            <option value="rating">평점순</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </main>
+
+  <footer id="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/list.js"></script>
+</body>
+</html>

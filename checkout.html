@@ -17,10 +17,10 @@
       <section>
         <h2 class="section-title">주문자 정보</h2>
         <div class="form-grid">
-          <div class="field"><label for="buyerName">이름</label><input id="buyerName" autocomplete="name" placeholder="이름을 입력해 주세요" value="김토스"></div>
-          <div class="field"><label for="buyerPhone">휴대폰</label><input id="buyerPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="숫자만 입력 (01012345678)" value="01012341234"></div>
-          <div class="field"><label for="buyerEmail">이메일</label><input id="buyerEmail" type="email" autocomplete="email" placeholder="example@email.com" value="customer@example.com"></div>
-          <div class="field"><label for="buyerAddr">배송지</label><input id="buyerAddr" autocomplete="street-address" placeholder="주소를 입력해 주세요" value="서울특별시 강남구 테헤란로 1"></div>
+          <div class="field"><label for="buyerName">이름</label><input id="buyerName" autocomplete="name" placeholder="이름을 입력해 주세요"></div>
+          <div class="field"><label for="buyerPhone">휴대폰</label><input id="buyerPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="숫자만 입력 (01012345678)"></div>
+          <div class="field"><label for="buyerEmail">이메일</label><input id="buyerEmail" type="email" autocomplete="email" placeholder="example@email.com"></div>
+          <div class="field"><label for="buyerAddr">배송지</label><input id="buyerAddr" autocomplete="street-address" placeholder="주소를 입력해 주세요"></div>
         </div>
 
         <h2 class="section-title">주문 상품 <span id="itemCount" style="color:#7a7a7a;font-weight:600"></span></h2>
@@ -50,6 +50,8 @@
 
   <footer id="footer"></footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase.js"></script>
   <script src="js/products.js"></script>
   <script src="js/common.js"></script>
   <script src="js/checkout.js"></script>
