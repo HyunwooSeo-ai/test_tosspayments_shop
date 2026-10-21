@@ -96,5 +96,6 @@ ES 모듈 없이 전역 스코프를 공유합니다. 모든 페이지는 아래
 
 - `.mcp.json`에 토스페이먼츠 MCP 서버(`@tosspayments/integration-guide-mcp`)를 등록해 두었습니다. Windows라서 `cmd /c npx ...`로 실행하는데, Node.js가 설치되어 있지 않아 지금은 연결되지 않습니다.
 - Supabase는 CLI 대신 Supabase MCP 도구로 다룹니다. 스키마 변경은 `apply_migration`, Edge Function 배포는 `deploy_edge_function`을 씁니다.
+- Supabase MCP `create_project`는 비용이 $0이어도 `get_cost` → `confirm_cost`로 받은 ID가 있어야 합니다.
 - Git은 `C:\Program Files\Git\cmd\git.exe`에 설치되어 있습니다. 원격 저장소는 `https://github.com/HyunwooSeo-ai/test_tosspayments_shop.git`의 `main` 브랜치입니다.
-- push할 때 GitHub 브라우저 인증이 필요할 수 있습니다. 비대화형 셸에서는 실패하므로 Terminal 패널에서 실행합니다.
+- push는 비대화형 셸에서도 인증 없이 됩니다(2026-10-21 확인). 인증 창이 뜨며 실패하면 Terminal 패널에서 실행합니다.
