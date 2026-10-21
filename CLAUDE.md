@@ -38,6 +38,7 @@ powershell -ExecutionPolicy Bypass -File serve.ps1
 - 토스 시크릿 키는 Edge Function secret `TOSS_SECRET_KEY`에서 읽고, 없으면 문서 공개 테스트 키(`test_gsk_docs_...`)를 씁니다.
 - 결제·재고 상태를 바꾸는 SQL 함수(`create_order`, `begin_confirm`, `finish_payment`, `close_order`, `apply_cancel`)는 service role만 실행할 수 있습니다. 화면에서 부르는 RPC는 `cart_add`, `mark_order_failed`, `has_purchased`, `admin_set_order_status`(함수 안에서 관리자 확인)뿐입니다.
 - 관리자는 `profiles.role = 'admin'`으로만 정합니다. 회원은 `profiles`의 `name`, `phone`, `address` 컬럼만 수정할 수 있습니다. 관리자 지정은 SQL로 합니다.
+- 같은 Supabase 프로젝트의 Realtime을 별도 게임 Sky Duel(`Documents\GodotProjects\sky_duel`)이 `skyduel-*` 채널로 씁니다. Realtime을 끄거나 설정을 바꾸면 게임이 멈춥니다.
 
 ### 주문 상태
 `PENDING`(결제 대기) → `CONFIRMING`(승인 중, 재고 이미 차감) → `PAID` / `WAITING_DEPOSIT`(가상계좌 입금 대기) → `PREPARING` → `SHIPPING` → `DELIVERED`. 실패는 `FAILED`, 방치는 `EXPIRED`, 취소는 `CANCELED`입니다. 재고는 `begin_confirm`에서 줄이고, 취소·실패하면 `restore_stock`으로 되돌립니다. `CONFIRMING`이 1분 넘게 남아 있으면 다시 확정을 시도할 수 있습니다.
