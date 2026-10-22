@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 실행
 
-토스 결제창은 `file://`에서 동작하지 않아 반드시 HTTP 서버로 열어야 합니다. 이 PC에는 Node.js와 Python이 없어서 PowerShell `HttpListener`로 만든 정적 서버를 씁니다.
+토스 결제창은 `file://`에서 동작하지 않아 반드시 HTTP 서버로 열어야 합니다. 정적 서버는 PowerShell `HttpListener`로 만든 `serve.ps1`을 씁니다(지금은 Node.js 24·Python 3.12도 설치되어 있지만 서버는 그대로 둡니다).
 
 ```bash
 powershell -ExecutionPolicy Bypass -File serve.ps1
@@ -94,7 +94,7 @@ ES 모듈 없이 전역 스코프를 공유합니다. 모든 페이지는 아래
 
 ## 환경 메모
 
-- `.mcp.json`에 토스페이먼츠 MCP 서버(`@tosspayments/integration-guide-mcp`)를 등록해 두었습니다. Windows라서 `cmd /c npx ...`로 실행하는데, Node.js가 설치되어 있지 않아 지금은 연결되지 않습니다.
+- `.mcp.json`에 토스페이먼츠 MCP 서버(`@tosspayments/integration-guide-mcp`)를 `cmd /c npx ...`로 등록해 두었습니다. 처음 연결할 때 `npx`가 패키지를 받느라 시간 초과가 날 수 있고, 잠시 뒤 다시 연결됩니다. 연동 코드를 쓸 때는 이 MCP의 문서 검색을 먼저 씁니다.
 - Supabase는 CLI 대신 Supabase MCP 도구로 다룹니다. 스키마 변경은 `apply_migration`, Edge Function 배포는 `deploy_edge_function`을 씁니다.
 - Supabase MCP `create_project`는 비용이 $0이어도 `get_cost` → `confirm_cost`로 받은 ID가 있어야 합니다.
 - Git은 `C:\Program Files\Git\cmd\git.exe`에 설치되어 있습니다. 원격 저장소는 `https://github.com/HyunwooSeo-ai/test_tosspayments_shop.git`의 `main` 브랜치입니다.
