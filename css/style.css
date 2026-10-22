@@ -300,6 +300,7 @@ img, svg { display: block; max-width: 100%; }
 .admin-bar input { height: 38px; width: 240px; }
 .admin-bar select { height: 38px; }
 .admin-bar .btn { margin-left: auto; }
+.admin-bar .btn + .btn { margin-left: 0; }
 .btn--sm { height: 38px; padding: 0 16px; font-size: 13px; }
 .table-wrap { overflow-x: auto; }
 .table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -355,4 +356,50 @@ img, svg { display: block; max-width: 100%; }
   .cart-item { grid-template-columns: 20px 72px 1fr; }
   .cart-item__right { grid-column: 3; align-items: flex-start; text-align: left; }
   .field { grid-template-columns: 1fr; gap: 6px; }
+}
+
+/* ---------- Chatbot ---------- */
+.chatbot__fab {
+  position: fixed; right: 24px; bottom: 24px; z-index: 90; width: 56px; height: 56px; border-radius: 50%;
+  background: var(--black); color: var(--white); display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,.25);
+}
+.chatbot__fab svg { width: 26px; height: 26px; }
+.chatbot.is-open .chatbot__fab { display: none; }
+.chatbot__panel {
+  position: fixed; right: 24px; bottom: 24px; z-index: 90; width: 380px; height: min(600px, calc(100vh - 48px));
+  background: var(--white); border: 1px solid var(--black); box-shadow: 0 10px 30px rgba(0,0,0,.2);
+  display: flex; flex-direction: column;
+}
+.chatbot__panel[hidden] { display: none; }
+.chatbot__head { display: flex; align-items: center; gap: 8px; height: 52px; padding: 0 12px 0 16px; background: var(--black); color: var(--white); }
+.chatbot__head strong { font-size: 15px; font-weight: 800; margin-right: auto; }
+.chatbot__reset { font-size: 12px; color: var(--gray-400); }
+.chatbot__close { width: 32px; height: 32px; font-size: 16px; }
+.chatbot__log { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: var(--gray-50); }
+.chatbot__msg { max-width: 85%; padding: 10px 12px; font-size: 13px; line-height: 1.55; white-space: pre-wrap; word-break: break-word; border-radius: 12px; }
+.chatbot__msg--assistant { align-self: flex-start; background: var(--white); border: 1px solid var(--gray-200); border-top-left-radius: 2px; }
+.chatbot__msg--user { align-self: flex-end; background: var(--black); color: var(--white); border-top-right-radius: 2px; }
+.chatbot__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chatbot__chip { font-size: 12px; padding: 6px 10px; border: 1px solid var(--gray-400); border-radius: 14px; background: var(--white); }
+.chatbot__chip:hover { border-color: var(--black); }
+.chatbot__products { display: grid; gap: 6px; }
+.chatbot__product { display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: center; padding: 8px; background: var(--white); border: 1px solid var(--gray-200); }
+.chatbot__product:hover { border-color: var(--black); }
+.chatbot__thumb { width: 56px; aspect-ratio: 5 / 6; overflow: hidden; background: var(--gray-100); }
+.chatbot__thumb img, .chatbot__thumb svg { width: 100%; height: 100%; object-fit: cover; }
+.chatbot__pname { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chatbot__product .price { margin-top: 2px; }
+.chatbot__typing { display: flex; gap: 4px; }
+.chatbot__typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--gray-400); animation: chatbot-dot 1s infinite; }
+.chatbot__typing span:nth-child(2) { animation-delay: .15s; }
+.chatbot__typing span:nth-child(3) { animation-delay: .3s; }
+@keyframes chatbot-dot { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+.chatbot__form { display: flex; gap: 6px; padding: 10px; border-top: 1px solid var(--gray-200); }
+.chatbot__form input { flex: 1; min-width: 0; height: 42px; padding: 0 12px; border: 1px solid var(--gray-200); font: inherit; outline: 0; }
+.chatbot__form input:focus { border-color: var(--black); }
+.chatbot__form .btn { height: 42px; padding: 0 16px; font-size: 13px; }
+@media (max-width: 600px) {
+  .chatbot__fab { right: 16px; bottom: 16px; }
+  .chatbot__panel { right: 0; bottom: 0; width: 100%; height: 100dvh; border: 0; }
 }

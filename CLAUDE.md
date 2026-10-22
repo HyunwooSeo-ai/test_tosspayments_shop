@@ -29,12 +29,17 @@ powershell -ExecutionPolicy Bypass -File serve.ps1
   - `0001_schema.sql`: 표 10개, RLS, 가입 시 `profiles` 자동 생성, 리뷰 별점 집계 트리거, `product-images` 저장소 버킷
   - `0002_order_functions.sql`: 주문·결제 SQL 함수, 5분마다 30분 넘은 결제 대기 주문을 만료하는 pg_cron 작업
   - `0003_seed.sql`: 예전 `products.js`의 상품 30개와 카테고리 7개, 사이즈별 재고
+  - `0004_fk_indexes.sql`: 장바구니·좋아요 외래 키 인덱스
+  - `0005_chatbot.sql`: pgvector, `product_embeddings`(1024차원), `match_products()`, 챗봇 호출 제한 `chat_allow()`(1분 10회)
 - `supabase/functions/`: Edge Function 원본입니다. 모두 `verify_jwt: false`로 배포하고 함수 안에서 `auth.getUser(token)`으로 직접 인증합니다.
   - `signup`: 이메일 인증 없이 계정을 만듭니다(가입 직후 자동 로그인용).
   - `create-order`: DB 가격으로 금액을 다시 계산하고 재고를 확인한 뒤 PENDING 주문을 만듭니다.
   - `confirm-payment`: 금액 대조 → 재고 차감 → 토스 승인 → PAID 전환. 이미 확정된 주문이면 그대로 성공을 돌려줍니다.
   - `cancel-payment`: 본인(PAID·입금 대기) 또는 관리자만 취소. 토스 취소 후 재고를 되돌립니다.
   - `toss-webhook`: 본문의 orderId로 토스 결제 조회 API를 다시 불러 실제 상태를 반영합니다.
+  - `embed-products`: 관리자만. 상품 설명(브랜드·이름·카테고리·종류·태그)을 Upstage `solar-embedding-2-passage`로 임베딩합니다. 설명 해시가 바뀐 상품만 다시 합니다. 관리자 화면의 "챗봇 학습" 버튼과 상품 저장 후에 불립니다.
+  - `chat`: 쇼핑 챗봇. 질문을 `solar-embedding-2-query`로 임베딩 → `match_products` 8개 → 가격·재고는 DB에서 새로 읽어 OpenAI(`OPENAI_MODEL`, 기본 `gpt-5-mini`)에 넘기고 `{ answer, productIds }`(JSON schema)로 받습니다. 로그인 없이 쓸 수 있습니다.
+- 챗봇 secret `OPENAI_API_KEY`, `UPSTAGE_API_KEY`가 없으면 `chat`은 503을 돌려줍니다. 키를 처음 넣은 뒤 관리자 화면에서 "챗봇 학습"을 한 번 눌러야 검색이 됩니다.
 - 토스 시크릿 키는 Edge Function secret `TOSS_SECRET_KEY`에서 읽고, 없으면 문서 공개 테스트 키(`test_gsk_docs_...`)를 씁니다.
 - 결제·재고 상태를 바꾸는 SQL 함수(`create_order`, `begin_confirm`, `finish_payment`, `close_order`, `apply_cancel`)는 service role만 실행할 수 있습니다. 화면에서 부르는 RPC는 `cart_add`, `mark_order_failed`, `has_purchased`, `admin_set_order_status`(함수 안에서 관리자 확인)뿐입니다.
 - 관리자는 `profiles.role = 'admin'`으로만 정합니다. 회원은 `profiles`의 `name`, `phone`, `address` 컬럼만 수정할 수 있습니다. 관리자 지정은 SQL로 합니다.
@@ -50,7 +55,8 @@ ES 모듈 없이 전역 스코프를 공유합니다. 모든 페이지는 아래
 2. `js/supabase.js`: 클라이언트 `sb`, Edge Function 호출 `callFn()`
 3. `js/products.js`: 카탈로그 로딩과 이미지
 4. `js/common.js`: 공통 로직
-5. 페이지 전용 스크립트
+5. `js/chatbot.js`: 오른쪽 아래 챗봇 창(쇼핑 페이지만. 주문서·결제 결과·관리자 화면에는 넣지 않음). 대화는 sessionStorage `nine_chat`.
+6. 페이지 전용 스크립트
 
 순서가 바뀌면 `sb`, `PRODUCTS`, `Cart` 같은 전역이 없어서 깨집니다.
 

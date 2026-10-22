@@ -45,6 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       <div class="admin-bar">
         <span>${products.length}개 상품</span>
         <input type="search" id="pSearch" placeholder="상품명·브랜드 검색">
+        <button type="button" class="btn btn--line btn--sm" id="embedProducts" title="상품 설명이 바뀐 상품만 챗봇 검색용으로 다시 학습합니다">챗봇 학습</button>
         <button type="button" class="btn btn--primary btn--sm" id="newProduct">+ 새 상품</button>
       </div>
       <div class="table-wrap">
@@ -70,11 +71,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
     $("pSearch").addEventListener("input", draw);
     $("newProduct").addEventListener("click", () => openProduct(null));
+    $("embedProducts").addEventListener("click", async (e) => {
+      e.target.disabled = true;
+      const r = await embedProducts();
+      e.target.disabled = false;
+      if (r) toast(r.updated ? `챗봇이 상품 ${r.updated}개를 새로 학습했어요` : "챗봇이 이미 최신 상품을 알고 있어요");
+    });
     $("pRows").addEventListener("click", (e) => {
       const btn = e.target.closest(".js-edit");
       if (btn) openProduct(products.find((p) => p.id === btn.dataset.id));
     });
     draw();
+  }
+
+  /* 챗봇 학습(embed-products). 실패해도 상품 저장에는 영향이 없습니다. */
+  async function embedProducts() {
+    try {
+      return await callFn("embed-products", {});
+    } catch (err) {
+      console.error(err);
+      toast(`챗봇 학습 실패: ${err.message}`);
+      return null;
+    }
   }
 
   /* ---------- 상품 등록·수정 모달 ---------- */
@@ -204,6 +222,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       modal.close();
       toast(editing ? "상품을 수정했어요" : "상품을 등록했어요");
+      embedProducts(); // 챗봇 검색용 임베딩도 갱신 (바뀐 상품만)
       await loadProducts();
       renderProducts();
     } catch (err) {
